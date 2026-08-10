@@ -10,7 +10,6 @@ const logEl = document.getElementById('activity-log');
 const timerStatus = document.getElementById('timer-status');
 const restartButton = document.getElementById('restart-button');
 const findButton = document.getElementById('find-button');
-const spotButton = document.getElementById('spot-button');
 const zoomButton = document.getElementById('zoom-button');
 const pauseButton = document.getElementById('pause-button');
 const mapDot = document.getElementById('map-dot');
@@ -359,32 +358,6 @@ findButton.addEventListener('click', () => {
 
   flashToast('Clique no mapa para encontrar uma Yana');
   addLog('Busca manual solicitada');
-});
-
-// Cria um marcador de visualização apontando para uma Yana ainda não encontrada.
-spotButton.addEventListener('click', () => {
-  const nextYana = yanas.find((yana) => !foundYanas.has(yana.id)) || yanas[0];
-
-  if (!nextYana) {
-    return;
-  }
-
-  const marker = document.createElement('div');
-  marker.className = 'spot-marker';
-
-  marker.style.left = `${nextYana.x}%`;
-  marker.style.top = `${nextYana.y}%`;
-
-  board.appendChild(marker);
-
-  marker.animate([
-    { transform: 'scale(0.9)', opacity: 0.85 },
-    { transform: 'scale(1.12)', opacity: 1 },
-    { transform: 'scale(0.78)', opacity: 0.15 }
-  ], {
-    duration: 700,
-    easing: 'ease-out'
-  }).onfinish = () => marker.remove();
 });
 
 // Alterna o zoom visual do quadro do tabuleiro para manter o foco no cenário.

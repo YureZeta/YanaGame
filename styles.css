@@ -372,17 +372,21 @@ body::before {
 }
 
 .primary-button {
-  height: 46px;
-  padding: 0 34px;
-  border-radius: 12px;
+  height: 54px;
+  padding: 0 54px;
+  border-radius: 14px;
   background: linear-gradient(120deg, var(--brand), var(--brand-2));
   color: var(--text-inverse);
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  min-width: min(100%, 360px);
 }
 
 .scene-footer {
   margin-top: 14px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
