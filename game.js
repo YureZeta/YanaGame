@@ -297,17 +297,22 @@ function startGame() {
 
 // Encerra a partida e atualiza a mensagem de estado visual a partir de resultado específico.
 function finishGame(won) {
+  if (timerId) {
+    clearInterval(timerId);
+    timerId = null;
+  }
+
   running = false;
   win = won;
 
-  clearInterval(timerId);
-
   if (won) {
     timerStatus.textContent = 'Concluído';
+    timerDisplay.textContent = formatTime(timeLeft);
     flashToast('Missão concluída!');
     addLog('Missão concluída');
   } else {
     timerStatus.textContent = 'Tempo esgotado';
+    timerDisplay.textContent = formatTime(0);
     flashToast('Tempo esgotado');
     addLog('Tempo esgotado');
   }
@@ -345,11 +350,14 @@ board.addEventListener('pointerdown', (event) => {
   handleSearch(event);
 });
 
-// Botão de confirmação do alvo. Ele apenas orienta a interação; a pontuação só entra na conta
-// quando o usuário efetivamente clica sobre a localização de uma Yana no mapa principal.
+// Botão de confirmação do alvo. Quando a missão está concluída, ele dispara a navegação para a página final.
 findButton.addEventListener('click', () => {
   if (foundYanas.size >= TOTAL_YANAS) {
-    flashToast('Missão concluída');
+    if (!win) {
+      finishGame(true);
+    }
+
+    window.location.assign('final.html');
     return;
   }
 

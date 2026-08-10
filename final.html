@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ache Yana - Concluído</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="final-body">
+  <main class="final-page">
+    <section class="final-panel">
+      <img class="final-image" src="assets/ela final.jpg" alt="Final da missão" />
+      <div class="final-copy">
+        <h1>Missão concluída</h1>
+        <p>Todas as Yanas foram encontradas.</p>
+        <a class="final-button" href="index.html">Voltar ao mapa</a>
+      </div>
+    </section>
+  </main>
+
+  <audio id="final-audio" src="assets/FinalSom.mp3" autoplay loop></audio>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const audio = document.getElementById('final-audio');
+      if (audio) {
+        audio.play().catch(() => {
+          // O navegador pode bloquear autoplay sem interação do usuário; a reprodução é tentada novamente.
+        });
+      }
+    });
+  </script>
+</body>
+</html>
