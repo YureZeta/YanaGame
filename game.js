@@ -19,6 +19,7 @@ const miniMap = document.getElementById('mini-map');
 // Estado de execução do jogo e cronômetro.
 let timeLeft = 120;
 let running = false;
+let paused = false;
 let win = false;
 let timerId = null;
 let toastTimer = null;
@@ -272,9 +273,13 @@ function startGame() {
     return;
   }
 
+  if (timeLeft <= 0) {
+    timeLeft = 120;
+  }
+
   running = true;
+  paused = false;
   win = false;
-  timeLeft = 120;
   timerStatus.textContent = 'Ativo';
   timerStatus.classList.remove('paused');
 
@@ -303,6 +308,7 @@ function finishGame(won) {
   }
 
   running = false;
+  paused = false;
   win = won;
 
   if (won) {
@@ -321,6 +327,7 @@ function finishGame(won) {
 // Reinicializa o estado do jogo para o início de uma nova sessão.
 function resetGame() {
   clearInterval(timerId);
+  timerId = null;
 
   yanas = generateYanas();
   foundYanas = new Set();
@@ -330,6 +337,7 @@ function resetGame() {
 
   timeLeft = 120;
   running = false;
+  paused = false;
   win = false;
   foundCount.textContent = '0';
   setProgress(0);
@@ -341,7 +349,6 @@ function resetGame() {
   yanaCard.dataset.found = '';
 
   addLog('Busca reiniciada');
-  startGame();
 }
 
 // Escuta direta de toque e clique no tabuleiro para localizar a resposta do usuário.
@@ -374,13 +381,19 @@ zoomButton.addEventListener('click', () => {
 pauseButton.addEventListener('click', () => {
   if (running) {
     running = false;
+    paused = true;
     clearInterval(timerId);
+    timerId = null;
     timerStatus.textContent = 'Pausado';
     pauseButton.querySelector('span').textContent = '▶';
     addLog('Jogo pausado');
-  } else {
+  } else if (paused) {
     startGame();
     pauseButton.querySelector('span').textContent = '⏸';
+    addLog('Jogo retomado');
+  } else {
+    flashToast('Clique no mapa para iniciar a busca');
+    addLog('Solicitação de pausa sem busca');
   }
 });
 
@@ -404,7 +417,7 @@ function hydrateAssets(assetMap) {
   board.querySelector('.board-background').style.backgroundImage = `url("${assetMap.background}")`;
 }
 
-// Inicializa o jogo e aplica as configurações da UI estáticas.
+// Inicializa o jogo e aplica as configurações da UI estáticas sem lançar o cronômetro antes da primeira interação.
 function bootstrap() {
   const assets = tndConfigureAssets();
   hydrateAssets(assets);
@@ -414,8 +427,8 @@ function bootstrap() {
   renderYanaMarkers();
   renderMiniMapYanas();
   foundCount.textContent = '0';
-
-  startGame();
+  setProgress(0);
+  timerDisplay.textContent = formatTime(timeLeft);
 }
 
 bootstrap();
