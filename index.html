@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ache o Wally</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand-wrap">
+        <div class="app-logo" aria-hidden="true">
+          <span class="logo-pin"></span>
+          <span class="logo-dot"></span>
+        </div>
+        <div>
+          <p class="eyebrow">Wally Finder</p>
+          <h1>Ache o Wally</h1>
+        </div>
+      </div>
+
+      <nav class="top-actions" aria-label="Controles principais">
+        <button class="icon-button" id="pause-button" aria-label="Pausar jogo">
+          <span aria-hidden="true">⏸</span>
+        </button>
+        <button class="icon-button primary" id="restart-button" aria-label="Reiniciar jogo">
+          <span aria-hidden="true">↻</span>
+          Nova busca
+        </button>
+      </nav>
+    </header>
+
+    <main class="game-page">
+      <aside class="game-aside left-panel">
+        <section class="panel-card status-card">
+          <div class="section-title">
+            <span>Missão</span>
+            <span class="badge">Wally</span>
+          </div>
+          <div class="target-meter">
+            <div class="meter-row">
+              <span class="label-text">Wally localizado</span>
+              <span class="findings-number"><span id="found-count">0</span>/8</span>
+            </div>
+            <div class="meter-track">
+              <div class="meter-fill" id="progress-fill"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="section-title compact">
+            <span>Tempo</span>
+            <span class="badge soft" id="timer-status">Ativo</span>
+          </div>
+          <div class="timer-wrap">
+            <span class="timer-number" id="timer-display">02:00</span>
+            <span class="timer-caption">Tempo restante</span>
+          </div>
+        </section>
+
+        <section class="panel-card">
+          <div class="section-title compact">
+            <span>Lista de procura</span>
+          </div>
+          <ul class="target-list" id="target-list">
+            <li class="target-row">
+              <span class="target-icon target-circles"></span>
+              <span>Wally</span>
+              <span class="target-status found-status">✓</span>
+            </li>
+            <li class="target-row">
+              <span class="target-icon target-forest"></span>
+              <span>Ovo de rua</span>
+              <span class="target-status">○</span>
+            </li>
+            <li class="target-row">
+              <span class="target-icon target-hat"></span>
+              <span>Chapéu vermelho</span>
+              <span class="target-status">○</span>
+            </li>
+          </ul>
+        </section>
+      </aside>
+
+      <section class="scene-zone">
+        <section class="scene-frame">
+          <div class="scene-toolbar">
+            <div>
+              <span class="scene-kicker">Foco</span>
+              <h2 class="scene-title">Centru de busca</h2>
+            </div>
+            <div class="scene-actions">
+              <button class="secondary-button" id="zoom-button">Zoom</button>
+            </div>
+          </div>
+
+          <div class="game-board-frame">
+            <div class="game-board" id="game-board">
+              <div class="board-background">
+                <div class="sun-glow"></div>
+                <div class="cloud cloud-one"></div>
+                <div class="cloud cloud-two"></div>
+                <div class="hill hill-back"></div>
+                <div class="hill hill-front"></div>
+                <div class="path"></div>
+                <div class="wally-dock" id="wally-dock">
+                  <div class="wally-card" id="wally-card">
+                    <span class="wally-glass"></span>
+                    <span class="wally-head"></span>
+                    <span class="wally-hat"></span>
+                    <span class="wally-body"></span>
+                    <span class="wally-cross"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toast-stack" id="toast-stack" aria-live="polite">
+                <div class="toast hidden" id="toast">
+                  <span class="toast-icon">+</span>
+                  <span class="toast-copy">Wally encontrado!</span>
+                </div>
+              </div>
+
+              <div class="scan-lines" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="scene-footer">
+            <button class="primary-button" id="find-button">Estou vendo Wally</button>
+            <button class="secondary-button" id="spot-button">Marcar ponto</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="game-aside right-panel">
+        <section class="panel-card log-card">
+          <div class="section-title">
+            <span>Relatório</span>
+            <span class="badge soft">Live</span>
+          </div>
+          <div class="activity-log" id="activity-log">
+            <div class="log-entry">
+              <span class="log-time">10:12</span>
+              <span class="log-copy">Busca iniciada</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">10:13</span>
+              <span class="log-copy">Mapa online</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-card mini-map-card">
+          <div class="section-title compact">
+            <span>Mapa</span>
+            <span class="badge" id="region-status">A</span>
+          </div>
+          <div class="mini-map">
+            <div class="mini-map-grid"></div>
+            <div class="mini-dot" id="map-dot"></div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
