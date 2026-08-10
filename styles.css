@@ -510,67 +510,24 @@ body::before {
   position: relative;
   width: 94px;
   height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.yana-card .yana-glass {
-  position: absolute;
-  width: 50px;
-  height: 24px;
-  border-radius: 16px;
-  border: 2px solid #132812;
-  background: linear-gradient(#95c2ce, #2cb2b9);
-  left: 21px;
-  top: 18px;
-}
-
-.yana-card .yana-head {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  left: 14px;
-  top: 9px;
-  background: radial-gradient(#f5d4ba, #e8b879);
-  border: 2px solid #2f332d;
-}
-
-.yana-card .yana-hat {
-  width: 80px;
-  height: 18px;
-  position: absolute;
-  left: 3px;
-  top: 0;
-  background: repeating-linear-gradient(90deg, #d53a19 0 4px, #a52114 4px 8px);
-  clip-path: polygon(0 100%, 18% 0, 84% 0, 100% 100%);
-}
-
-.yana-card .yana-body {
-  position: absolute;
-  width: 80px;
-  height: 48px;
-  left: 4px;
-  bottom: 2px;
-  border-radius: 12px 12px 20px 20px;
-  border: 2px solid #6a4222;
-  background: repeating-linear-gradient(135deg, #113b30 0 7px, #375a45 7px 13px);
-}
-
-.yana-card .yana-cross {
-  position: absolute;
-  left: 41px;
-  bottom: 40px;
-  width: 12px;
-  height: 34px;
-  border-radius: 6px;
-  background: #7d452b;
+.yana-card .yana-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .yana-card.found {
   animation: foundPulse 500ms ease;
 }
 
-.yana-card.found .yana-head {
-  box-shadow: 0 0 0 2px var(--brand-3) inset, 0 0 10px 3px var(--brand-3);
+.yana-card.found .yana-image {
+  filter: drop-shadow(0 0 2px var(--brand-3)) drop-shadow(0 0 8px var(--brand-3));
 }
 
 .yana-card .yana-card-target::after {
