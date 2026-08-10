@@ -553,6 +553,33 @@ body::before {
   content: "";
 }
 
+.yana-marker {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  z-index: 2;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.yana-marker .yana-marker-image {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,.85));
+}
+
+.yana-marker.found {
+  filter: drop-shadow(0 0 0 var(--brand-3)) drop-shadow(0 0 8px var(--brand-3));
+}
+
+.yana-marker.found .yana-marker-image {
+  opacity: 0.55;
+}
+
 .spot-marker {
   pointer-events: none;
   position: absolute;
@@ -672,6 +699,20 @@ body::before {
   transform: translate(-50%, -50%);
   background: var(--brand);
   border: 2px solid var(--text-inverse);
+}
+
+.mini-yana-marker {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  background-image: url("assets/Sprite 1.png");
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--brand);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.45) inset;
 }
 
 @keyframes foundPulse {

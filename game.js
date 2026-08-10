@@ -14,6 +14,7 @@ const spotButton = document.getElementById('spot-button');
 const zoomButton = document.getElementById('zoom-button');
 const pauseButton = document.getElementById('pause-button');
 const mapDot = document.getElementById('map-dot');
+const miniMap = document.getElementById('mini-map');
 
 // A área visual do alvo no tabuleiro e o cartão do personagem encontrado.
 const yanaDock = document.getElementById('yana-dock');
@@ -95,6 +96,46 @@ function renderTargetList() {
   targetList.appendChild(row);
 }
 
+// Renderiza os marcadores visuais das 8 Yanas sobre o mapa do jogo.
+function renderYanaMarkers() {
+  const existing = board.querySelectorAll('.yana-marker');
+  existing.forEach((marker) => marker.remove());
+
+  yanas.forEach((yana) => {
+    const marker = document.createElement('div');
+    marker.className = 'yana-marker';
+    marker.dataset.yanaId = String(yana.id);
+    marker.setAttribute('aria-label', `Yana ${yana.id}`);
+    marker.style.left = `${yana.x}%`;
+    marker.style.top = `${yana.y}%`;
+
+    const img = document.createElement('img');
+    img.src = 'assets/Sprite 1.png';
+    img.alt = `Yana ${yana.id}`;
+    img.className = 'yana-marker-image';
+
+    marker.appendChild(img);
+    board.appendChild(marker);
+  });
+}
+
+// Renderiza as 8 Yanas no mini-mapa para que sejam expostas junto ao cenário base.
+function renderMiniMapYanas() {
+  const previousMarkers = miniMap.querySelectorAll('.mini-yana-marker');
+  previousMarkers.forEach((marker) => marker.remove());
+
+  yanas.forEach((yana) => {
+    const marker = document.createElement('div');
+    marker.className = 'mini-yana-marker';
+    marker.dataset.yanaId = String(yana.id);
+    marker.title = `Yana ${yana.id}`;
+    marker.style.left = `${yana.x}%`;
+    marker.style.top = `${yana.y}%`;
+
+    miniMap.appendChild(marker);
+  });
+}
+
 // Converte segundos em formato MM:SS para exibir o tempo restante.
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -168,13 +209,9 @@ function handleFound(yanaId) {
   foundCount.textContent = String(score);
   setProgress(score);
 
-  const row = targetList.querySelector(`[data-yana-id="${yanaId}"]`);
-  if (row) {
-    const status = row.querySelector('.target-status');
-    if (status) {
-      status.textContent = '✓';
-      status.classList.add('found-status');
-    }
+  const marker = board.querySelector(`[data-yana-id="${yanaId}"]`);
+  if (marker) {
+    marker.classList.add('found');
   }
 
   yanaCard.classList.add('found');
@@ -287,6 +324,8 @@ function resetGame() {
   yanas = generateYanas();
   foundYanas = new Set();
   renderTargetList();
+  renderYanaMarkers();
+  renderMiniMapYanas();
 
   timeLeft = 120;
   running = false;
@@ -310,25 +349,16 @@ board.addEventListener('pointerdown', (event) => {
   handleSearch(event);
 });
 
-// Botão de confirmação do alvo usando uma Yana ainda não encontrada.
+// Botão de confirmação do alvo. Ele apenas orienta a interação; a pontuação só entra na conta
+// quando o usuário efetivamente clica sobre a localização de uma Yana no mapa principal.
 findButton.addEventListener('click', () => {
-  const nextYana = yanas.find((yana) => !foundYanas.has(yana.id));
-
-  if (!nextYana) {
+  if (foundYanas.size >= TOTAL_YANAS) {
     flashToast('Missão concluída');
     return;
   }
 
-  const boardRect = board.getBoundingClientRect();
-  const xPx = (nextYana.x / 100) * boardRect.width;
-  const yPx = (nextYana.y / 100) * boardRect.height;
-
-  const clickEvent = {
-    clientX: boardRect.left + xPx,
-    clientY: boardRect.top + yPx
-  };
-
-  handleSearch(clickEvent);
+  flashToast('Clique no mapa para encontrar uma Yana');
+  addLog('Busca manual solicitada');
 });
 
 // Cria um marcador de visualização apontando para uma Yana ainda não encontrada.
@@ -403,6 +433,8 @@ function bootstrap() {
 
   yanas = generateYanas();
   renderTargetList();
+  renderYanaMarkers();
+  renderMiniMapYanas();
   foundCount.textContent = '0';
 
   startGame();
