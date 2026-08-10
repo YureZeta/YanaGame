@@ -1,6 +1,6 @@
 # Ache Yana
 
-Este repositório tem uma implementação estática em HTML5, CSS3 e JavaScript para um jogo tipo "Ache Yana" com uma UI adaptativa para mouse e touch screen.
+Este repositório tem uma implementação estática em HTML5, CSS3 e JavaScript para um jogo tipo "Ache Wally" com uma UI adaptativa para mouse e touch screen.
 
 ## Estrutura
 
