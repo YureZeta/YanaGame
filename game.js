@@ -26,13 +26,74 @@ let win = false;
 let timerId = null;
 let toastTimer = null;
 
-// Coordenadas em percentual da área do tabuleiro onde Yana está localizada.
-const target = {
-  left: 48,
-  top: 36,
-  width: 8,
-  height: 17
+// Quantidade de Yanas que devem surgir por partida.
+const TOTAL_YANAS = 8;
+
+// Estado das Yanas geradas na partida para controle de descoberta.
+let yanas = [];
+let foundYanas = new Set();
+
+// Coordenadas em percentual da área do tabuleiro onde a busca é analisada.
+const mapBounds = {
+  left: 4,
+  right: 96,
+  top: 6,
+  bottom: 94
 };
+
+// Gera posições aleatórias para as 8 Yanas escondidas dentro do mapa.
+function generateYanas() {
+  const generated = [];
+
+  while (generated.length < TOTAL_YANAS) {
+    const x = 10 + Math.round(Math.random() * 78);
+    const y = 12 + Math.round(Math.random() * 74);
+    const key = `${x}:${y}`;
+
+    if (!generated.some((yana) => `${yana.x}:${yana.y}` === key)) {
+      generated.push({
+        id: generated.length + 1,
+        x,
+        y,
+        found: false
+      });
+    }
+  }
+
+  return generated;
+}
+
+// Cria o único item visual da lista de procura com imagem de Yana e total do mapa.
+function renderTargetList() {
+  targetList.innerHTML = '';
+
+  const row = document.createElement('li');
+  row.className = 'target-row target-row-single';
+
+  const icon = document.createElement('span');
+  icon.className = 'target-icon target-yana';
+
+  const image = document.createElement('img');
+  image.className = 'target-yana-image';
+  image.src = 'assets/Sprite 1.png';
+  image.alt = 'Yana';
+
+  const label = document.createElement('span');
+  label.className = 'target-copy';
+  label.textContent = 'Yanas';
+
+  const count = document.createElement('span');
+  count.className = 'target-count';
+  count.textContent = String(TOTAL_YANAS);
+
+  icon.appendChild(image);
+
+  row.appendChild(icon);
+  row.appendChild(label);
+  row.appendChild(count);
+
+  targetList.appendChild(row);
+}
 
 // Converte segundos em formato MM:SS para exibir o tempo restante.
 function formatTime(seconds) {
@@ -72,7 +133,7 @@ function addLog(message) {
 
 // Atualiza a barra de progresso da missão com base no número de alvos descobertos.
 function setProgress(score) {
-  const percent = Math.max(0, Math.min(100, (score / 8) * 100));
+  const percent = Math.max(0, Math.min(100, (score / TOTAL_YANAS) * 100));
   progressFill.style.width = `${percent}%`;
 }
 
@@ -91,54 +152,52 @@ function flashToast(message) {
 }
 
 // Processa a identificação do alvo quando a busca coincide com a posição de Yana.
-function handleFound() {
-  if (win) {
+function handleFound(yanaId) {
+  if (win || foundYanas.has(yanaId)) {
     return;
+  }
+
+  foundYanas.add(yanaId);
+  const foundYana = yanas.find((item) => item.id === yanaId);
+
+  if (foundYana) {
+    foundYana.found = true;
+  }
+
+  const score = foundYanas.size;
+  foundCount.textContent = String(score);
+  setProgress(score);
+
+  const row = targetList.querySelector(`[data-yana-id="${yanaId}"]`);
+  if (row) {
+    const status = row.querySelector('.target-status');
+    if (status) {
+      status.textContent = '✓';
+      status.classList.add('found-status');
+    }
   }
 
   yanaCard.classList.add('found');
   yanaCard.style.outline = '3px solid var(--brand-3)';
 
-  if (!yanaCard.dataset.found) {
-    yanaCard.dataset.found = 'true';
-    const score = Number(foundCount.textContent) + 1;
-    foundCount.textContent = String(score);
-    setProgress(score);
+  flashToast(`Yana ${String(yanaId).padStart(2, '0')} encontrada!`);
+  addLog(`Yana ${String(yanaId).padStart(2, '0')} localizada com sucesso`);
 
-    const foundItem = document.createElement('li');
-    foundItem.className = 'target-row';
-    foundItem.innerHTML = `<span class="target-icon target-circles"></span><span>Yana</span><span class="target-status found-status">✓</span>`;
-
-    const existingItems = Array.from(targetList.children);
-    const firstRow = existingItems[0];
-
-    if (firstRow && firstRow.querySelector('span:nth-child(2)').textContent.trim() === 'Yana') {
-      firstRow.querySelector('.target-status').textContent = '✓';
-      firstRow.querySelector('.target-status').classList.add('found-status');
-    } else {
-      targetList.insertBefore(foundItem, targetList.firstChild);
-    }
-
-    flashToast('Yana encontrada!');
-    addLog('Yana localizada com sucesso');
-
-    if (score >= 8) {
-      finishGame(true);
-    }
+  if (score >= TOTAL_YANAS) {
+    finishGame(true);
   }
 }
 
-// Verifica se um ponto do tabuleiro cai dentro do retângulo alvo definido para Yana.
-function isInsideTarget(xPercent, yPercent) {
-  const normalizedX = xPercent;
-  const normalizedY = yPercent;
+// Verifica se um ponto do tabuleiro coincide com alguma Yana escondida.
+function findYanaAt(xPercent, yPercent) {
+  const hit = yanas.find((yana) => {
+    const xDelta = Math.abs(yana.x - xPercent);
+    const yDelta = Math.abs(yana.y - yPercent);
 
-  const left = target.left;
-  const right = target.left + target.width;
-  const top = target.top;
-  const bottom = target.top + target.height;
+    return xDelta <= 2.8 && yDelta <= 2.8;
+  });
 
-  return normalizedX >= left && normalizedX <= right && normalizedY >= top && normalizedY <= bottom;
+  return hit || null;
 }
 
 // Ajusta a posição visual do marcador no mini mapa com base na coordenada de busca.
@@ -162,12 +221,12 @@ function handleSearch(event) {
 
   const xPercent = (x / rect.width) * 100;
   const yPercent = (y / rect.height) * 100;
-  const hit = isInsideTarget(xPercent, yPercent);
+  const matchedYana = findYanaAt(xPercent, yPercent);
 
   updateMapPosition(xPercent, yPercent);
 
-  if (hit) {
-    handleFound();
+  if (matchedYana) {
+    handleFound(matchedYana.id);
   } else {
     flashToast('Zona de busca');
     addLog('Local marcado');
@@ -225,6 +284,10 @@ function finishGame(won) {
 function resetGame() {
   clearInterval(timerId);
 
+  yanas = generateYanas();
+  foundYanas = new Set();
+  renderTargetList();
+
   timeLeft = 120;
   running = false;
   win = false;
@@ -237,15 +300,6 @@ function resetGame() {
   yanaCard.style.outline = 'none';
   yanaCard.dataset.found = '';
 
-  const rows = targetList.querySelectorAll('.target-row');
-  rows.forEach((row) => {
-    const status = row.querySelector('.target-status');
-    if (status) {
-      status.textContent = '○';
-      status.classList.remove('found-status');
-    }
-  });
-
   addLog('Busca reiniciada');
   startGame();
 }
@@ -256,14 +310,18 @@ board.addEventListener('pointerdown', (event) => {
   handleSearch(event);
 });
 
-// Botão de confirmação do alvo usando a geometria conhecida do tabuleiro.
+// Botão de confirmação do alvo usando uma Yana ainda não encontrada.
 findButton.addEventListener('click', () => {
-  const x = target.left + target.width / 2;
-  const y = target.top + target.height / 2;
+  const nextYana = yanas.find((yana) => !foundYanas.has(yana.id));
+
+  if (!nextYana) {
+    flashToast('Missão concluída');
+    return;
+  }
 
   const boardRect = board.getBoundingClientRect();
-  const xPx = (x / 100) * boardRect.width;
-  const yPx = (y / 100) * boardRect.height;
+  const xPx = (nextYana.x / 100) * boardRect.width;
+  const yPx = (nextYana.y / 100) * boardRect.height;
 
   const clickEvent = {
     clientX: boardRect.left + xPx,
@@ -273,16 +331,19 @@ findButton.addEventListener('click', () => {
   handleSearch(clickEvent);
 });
 
-// Cria um marcador de visualização apontando para a localização esperada do alvo.
+// Cria um marcador de visualização apontando para uma Yana ainda não encontrada.
 spotButton.addEventListener('click', () => {
+  const nextYana = yanas.find((yana) => !foundYanas.has(yana.id)) || yanas[0];
+
+  if (!nextYana) {
+    return;
+  }
+
   const marker = document.createElement('div');
   marker.className = 'spot-marker';
 
-  const x = target.left + target.width / 2;
-  const y = target.top + target.height / 2;
-
-  marker.style.left = `${x}%`;
-  marker.style.top = `${y}%`;
+  marker.style.left = `${nextYana.x}%`;
+  marker.style.top = `${nextYana.y}%`;
 
   board.appendChild(marker);
 
@@ -339,6 +400,11 @@ function hydrateAssets(assetMap) {
 function bootstrap() {
   const assets = tndConfigureAssets();
   hydrateAssets(assets);
+
+  yanas = generateYanas();
+  renderTargetList();
+  foundCount.textContent = '0';
+
   startGame();
 }
 
