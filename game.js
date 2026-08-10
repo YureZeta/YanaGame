@@ -26,6 +26,7 @@ let toastTimer = null;
 
 // Quantidade de Yanas que devem surgir por partida.
 const TOTAL_YANAS = 8;
+const MIN_YANA_DISTANCE = 10;
 
 // Estado das Yanas geradas na partida para controle de descoberta.
 let yanas = [];
@@ -39,22 +40,38 @@ const mapBounds = {
   bottom: 94
 };
 
-// Gera posições aleatórias para as 8 Yanas escondidas dentro do mapa.
+// Avalia se a nova posição entra em conflito com uma Yana já criada pelo critério de separação mínima.
+function canPlaceYana(candidate, generated) {
+  const overlap = generated.some((yana) => {
+    const dx = candidate.x - yana.x;
+    const dy = candidate.y - yana.y;
+    const distance = Math.sqrt((dx * dx) + (dy * dy));
+
+    return distance < MIN_YANA_DISTANCE;
+  });
+
+  return !overlap;
+}
+
+// Gera posições aleatórias para as 8 Yanas escondidas dentro do mapa, sem sobreposição entre si.
 function generateYanas() {
   const generated = [];
 
   while (generated.length < TOTAL_YANAS) {
     const x = 10 + Math.round(Math.random() * 78);
     const y = 12 + Math.round(Math.random() * 74);
-    const key = `${x}:${y}`;
+    const candidate = {
+      id: generated.length + 1,
+      x,
+      y,
+      found: false
+    };
 
-    if (!generated.some((yana) => `${yana.x}:${yana.y}` === key)) {
-      generated.push({
-        id: generated.length + 1,
-        x,
-        y,
-        found: false
-      });
+    const key = `${x}:${y}`;
+    const duplicate = generated.some((yana) => `${yana.x}:${yana.y}` === key);
+
+    if (!duplicate && canPlaceYana(candidate, generated)) {
+      generated.push(candidate);
     }
   }
 
