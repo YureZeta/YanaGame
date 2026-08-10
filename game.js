@@ -323,7 +323,7 @@ restartButton.addEventListener('click', () => {
 // Centraliza o caminho dos assets da interface e seu carregamento inicial.
 function tndConfigureAssets() {
   const assetMap = {
-    background: 'assets/forest.svg',
+    background: 'assets/Mapa.jpeg',
     miniMap: 'assets/mini-map.svg'
   };
 

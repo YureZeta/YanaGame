@@ -7,7 +7,7 @@ Este repositório tem uma implementação estática em HTML5, CSS3 e JavaScript 
 - `index.html` — layout principal e composição visual do jogo.
 - `styles.css` — estilos responsivos e visual completo da interface.
 - `game.js` — interações do jogo, contagem regressiva, rastreamento e eventos para clique/touch.
-- `assets/forest.svg` — imagem de fundo principal da cena.
+- `assets/Mapa.jpeg` — imagem de fundo principal da cena.
 - `assets/mini-map.svg` — mini mapa opcional visual.
 
 ## Customização de assets

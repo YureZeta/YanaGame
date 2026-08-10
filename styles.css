@@ -396,7 +396,7 @@ body::before {
 .board-background {
   position: absolute;
   inset: -2px;
-  background-image: url("assets/forest.svg");
+  background-image: url("assets/Mapa.jpeg");
   background-size: cover;
   background-position: center;
 }
