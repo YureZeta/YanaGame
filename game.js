@@ -15,9 +15,6 @@ const pauseButton = document.getElementById('pause-button');
 const mapDot = document.getElementById('map-dot');
 const miniMap = document.getElementById('mini-map');
 
-// A área visual do alvo no tabuleiro e o cartão do personagem encontrado.
-const yanaDock = document.getElementById('yana-dock');
-const yanaCard = document.getElementById('yana-card');
 
 // Estado de execução do jogo e cronômetro.
 let timeLeft = 120;
