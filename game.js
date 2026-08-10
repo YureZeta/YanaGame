@@ -14,8 +14,8 @@ const zoomButton = document.getElementById('zoom-button');
 const pauseButton = document.getElementById('pause-button');
 const mapDot = document.getElementById('map-dot');
 
-const wallyDock = document.getElementById('wally-dock');
-const wallyCard = document.getElementById('wally-card');
+const yanaDock = document.getElementById('yana-dock');
+const yanaCard = document.getElementById('yana-card');
 
 let timeLeft = 120;
 let running = false;
@@ -87,31 +87,31 @@ function handleFound() {
     return;
   }
 
-  wallyCard.classList.add('found');
-  wallyCard.style.outline = '3px solid var(--brand-3)';
+  yanaCard.classList.add('found');
+  yanaCard.style.outline = '3px solid var(--brand-3)';
 
-  if (!wallyCard.dataset.found) {
-    wallyCard.dataset.found = 'true';
+  if (!yanaCard.dataset.found) {
+    yanaCard.dataset.found = 'true';
     const score = Number(foundCount.textContent) + 1;
     foundCount.textContent = String(score);
     setProgress(score);
 
     const foundItem = document.createElement('li');
     foundItem.className = 'target-row';
-    foundItem.innerHTML = `<span class="target-icon target-circles"></span><span>Wally</span><span class="target-status found-status">✓</span>`;
+    foundItem.innerHTML = `<span class="target-icon target-circles"></span><span>Yana</span><span class="target-status found-status">✓</span>`;
 
     const existingItems = Array.from(targetList.children);
     const firstRow = existingItems[0];
 
-    if (firstRow && firstRow.querySelector('span:nth-child(2)').textContent.trim() === 'Wally') {
+    if (firstRow && firstRow.querySelector('span:nth-child(2)').textContent.trim() === 'Yana') {
       firstRow.querySelector('.target-status').textContent = '✓';
       firstRow.querySelector('.target-status').classList.add('found-status');
     } else {
       targetList.insertBefore(foundItem, targetList.firstChild);
     }
 
-    flashToast('Wally encontrado!');
-    addLog('Wally localizado com sucesso');
+    flashToast('Yana encontrada!');
+    addLog('Yana localizada com sucesso');
 
     if (score >= 8) {
       finishGame(true);
@@ -218,9 +218,9 @@ function resetGame() {
   timerDisplay.textContent = formatTime(timeLeft);
   timerStatus.textContent = 'Ativo';
 
-  wallyCard.classList.remove('found');
-  wallyCard.style.outline = 'none';
-  wallyCard.dataset.found = '';
+  yanaCard.classList.remove('found');
+  yanaCard.style.outline = 'none';
+  yanaCard.dataset.found = '';
 
   const rows = targetList.querySelectorAll('.target-row');
   rows.forEach((row) => {
