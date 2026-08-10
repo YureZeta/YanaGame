@@ -58,6 +58,10 @@ function addLog(message) {
   entry.appendChild(copyNode);
 
   logEl.insertBefore(entry, logEl.firstChild);
+
+  while (logEl.children.length > 10) {
+    logEl.removeChild(logEl.lastElementChild);
+  }
 }
 
 function setProgress(score) {
