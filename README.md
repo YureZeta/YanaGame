@@ -31,3 +31,4 @@ O arquivo `game.js` também contém `resetGame()` para limpar todos os dados vis
 ## GitHub Pages
 
 Como é uma aplicação estática, o GitHub Pages pode publicar esse diretório diretamente com suporte a `index.html`, `styles.css`, `game.js` e os assets em `assets/`.
+Jogue em: [YanaGame](https://yurezeta.github.io/YanaGame/)
