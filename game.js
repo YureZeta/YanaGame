@@ -1,3 +1,4 @@
+// Elementos principais da interface do jogo que são usados em vários pontos do código.
 const board = document.getElementById('game-board');
 const timerDisplay = document.getElementById('timer-display');
 const foundCount = document.getElementById('found-count');
@@ -14,15 +15,18 @@ const zoomButton = document.getElementById('zoom-button');
 const pauseButton = document.getElementById('pause-button');
 const mapDot = document.getElementById('map-dot');
 
+// A área visual do alvo no tabuleiro e o cartão do personagem encontrado.
 const yanaDock = document.getElementById('yana-dock');
 const yanaCard = document.getElementById('yana-card');
 
+// Estado de execução do jogo e cronômetro.
 let timeLeft = 120;
 let running = false;
 let win = false;
 let timerId = null;
 let toastTimer = null;
 
+// Coordenadas em percentual da área do tabuleiro onde Yana está localizada.
 const target = {
   left: 48,
   top: 36,
@@ -30,12 +34,14 @@ const target = {
   height: 17
 };
 
+// Converte segundos em formato MM:SS para exibir o tempo restante.
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
+// Registra uma ação no relatório e mantém apenas as últimas 10 entradas.
 function addLog(message) {
   const now = new Date();
   const time = now.toLocaleTimeString([], {
@@ -64,11 +70,13 @@ function addLog(message) {
   }
 }
 
+// Atualiza a barra de progresso da missão com base no número de alvos descobertos.
 function setProgress(score) {
   const percent = Math.max(0, Math.min(100, (score / 8) * 100));
   progressFill.style.width = `${percent}%`;
 }
 
+// Exibe uma mensagem temporária na interface e a limpa ao fim do tempo configurado.
 function flashToast(message) {
   toast.querySelector('.toast-copy').textContent = message;
   toast.classList.remove('hidden');
@@ -82,6 +90,7 @@ function flashToast(message) {
   }, 2500);
 }
 
+// Processa a identificação do alvo quando a busca coincide com a posição de Yana.
 function handleFound() {
   if (win) {
     return;
@@ -119,6 +128,7 @@ function handleFound() {
   }
 }
 
+// Verifica se um ponto do tabuleiro cai dentro do retângulo alvo definido para Yana.
 function isInsideTarget(xPercent, yPercent) {
   const normalizedX = xPercent;
   const normalizedY = yPercent;
@@ -131,6 +141,7 @@ function isInsideTarget(xPercent, yPercent) {
   return normalizedX >= left && normalizedX <= right && normalizedY >= top && normalizedY <= bottom;
 }
 
+// Ajusta a posição visual do marcador no mini mapa com base na coordenada de busca.
 function updateMapPosition(xPercent, yPercent) {
   const mapLeft = Math.max(4, Math.min(90, xPercent));
   const mapTop = Math.max(6, Math.min(88, yPercent));
@@ -139,6 +150,7 @@ function updateMapPosition(xPercent, yPercent) {
   mapDot.style.top = `${mapTop}%`;
 }
 
+// Coordena uma tentativa de busca na cena: inicia, converte clique/touch e decide se houve acerto.
 function handleSearch(event) {
   if (!running) {
     startGame();
@@ -162,6 +174,7 @@ function handleSearch(event) {
   }
 }
 
+// Inicia o timer do jogo e prepara o estado inicial da corrida de busca.
 function startGame() {
   if (running) {
     return;
@@ -190,6 +203,7 @@ function startGame() {
   addLog('Busca iniciada');
 }
 
+// Encerra a partida e atualiza a mensagem de estado visual a partir de resultado específico.
 function finishGame(won) {
   running = false;
   win = won;
@@ -207,6 +221,7 @@ function finishGame(won) {
   }
 }
 
+// Reinicializa o estado do jogo para o início de uma nova sessão.
 function resetGame() {
   clearInterval(timerId);
 
@@ -235,11 +250,13 @@ function resetGame() {
   startGame();
 }
 
+// Escuta direta de toque e clique no tabuleiro para localizar a resposta do usuário.
 board.addEventListener('pointerdown', (event) => {
   event.preventDefault();
   handleSearch(event);
 });
 
+// Botão de confirmação do alvo usando a geometria conhecida do tabuleiro.
 findButton.addEventListener('click', () => {
   const x = target.left + target.width / 2;
   const y = target.top + target.height / 2;
@@ -256,6 +273,7 @@ findButton.addEventListener('click', () => {
   handleSearch(clickEvent);
 });
 
+// Cria um marcador de visualização apontando para a localização esperada do alvo.
 spotButton.addEventListener('click', () => {
   const marker = document.createElement('div');
   marker.className = 'spot-marker';
@@ -278,10 +296,12 @@ spotButton.addEventListener('click', () => {
   }).onfinish = () => marker.remove();
 });
 
+// Alterna o zoom visual do quadro do tabuleiro para manter o foco no cenário.
 zoomButton.addEventListener('click', () => {
   board.classList.toggle('zoomed');
 });
 
+// Pausa ou retoma a execução dependendo do estado do jogo.
 pauseButton.addEventListener('click', () => {
   if (running) {
     running = false;
@@ -295,10 +315,12 @@ pauseButton.addEventListener('click', () => {
   }
 });
 
+// Reinicia a cena por meio de um reset completo do estado.
 restartButton.addEventListener('click', () => {
   resetGame();
 });
 
+// Centraliza o caminho dos assets da interface e seu carregamento inicial.
 function tndConfigureAssets() {
   const assetMap = {
     background: 'assets/forest.svg',
@@ -308,10 +330,12 @@ function tndConfigureAssets() {
   return assetMap;
 }
 
+// Atribui o background principal do tabuleiro a partir do mapa de assets configurado.
 function hydrateAssets(assetMap) {
   board.querySelector('.board-background').style.backgroundImage = `url("${assetMap.background}")`;
 }
 
+// Inicializa o jogo e aplica as configurações da UI estáticas.
 function bootstrap() {
   const assets = tndConfigureAssets();
   hydrateAssets(assets);

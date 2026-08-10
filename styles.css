@@ -1,9 +1,11 @@
+/* Reset básico para garantir tamanho consistente em todos os elementos. */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* Variáveis compartilhadas de cor, tipografia e tema visual do jogo. */
 :root {
   --bg: #091a1d;
   --bg-soft: #103333;
@@ -46,12 +48,14 @@ body::before {
   mask-image: linear-gradient(rgba(0,0,0,.65), transparent);
 }
 
+/* Container principal da aplicação e layout global. */
 .app-shell {
   max-width: 1600px;
   margin: 0 auto;
   padding: 24px;
 }
 
+/* Cabeçalho com identidade e navegação principal. */
 .app-header {
   display: flex;
   align-items: center;
@@ -142,6 +146,7 @@ body::before {
   color: var(--text-inverse);
 }
 
+/* Grade principal com áreas laterais e zona central do jogo. */
 .game-page {
   margin-top: 24px;
   display: grid;
@@ -254,11 +259,13 @@ body::before {
   color: var(--text-faint);
 }
 
+/* Lista de alvos que aparecem na coluna de missão. */
 .target-list {
   list-style: none;
   margin-top: 14px;
 }
 
+/* Cada item representa uma pessoa/alvo a ser localizado. */
 .target-row {
   display: flex;
   align-items: center;
@@ -306,6 +313,7 @@ body::before {
   color: var(--brand-3);
 }
 
+/* Quadro principal da cena e toolbar relacionada às ações visuais. */
 .scene-frame {
   padding: 20px;
   position: relative;
@@ -361,6 +369,7 @@ body::before {
   gap: 12px;
 }
 
+/* Estrutura do quadro que recebe o background, toasts e sobreposição de scanlines. */
 .game-board-frame {
   margin-top: 14px;
   width: 100%;
